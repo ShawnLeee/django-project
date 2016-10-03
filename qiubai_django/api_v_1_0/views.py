@@ -7,6 +7,12 @@ from models import QBPost
 from serializers import QBPostSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from uuid import uuid4
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def secret_page(request):
+    return Response('Secret contents!', status=status.HTTP_200_OK)
 
 
 class QBPostList(APIView):
@@ -29,6 +35,7 @@ class QBPostList(APIView):
 
 
 class AddPost(APIView):
+
     def post(self, request):
         post_data = request.data
         post_id = uuid4().hex
