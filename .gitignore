@@ -1,1 +1,3 @@
-venv_django
+venv
+*.py[cod]
+*.so
