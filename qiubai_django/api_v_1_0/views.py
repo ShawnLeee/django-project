@@ -1,9 +1,10 @@
+# encoding: utf-8
 # from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 # from django.http import Http404
-from models import QBPost
+from models import QBPost, QBComment
 from serializers import QBPostSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from uuid import uuid4
@@ -46,4 +47,21 @@ class AddPost(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DeletePost(APIView):
+
+    def post(self, request):
+        request_data = request.data
+        post_id = request_data.get('post_id')
+#       删除文章及文章的评论
+        post = QBPost.objects.filter(post_id=post_id)
+        comments = QBComment.objects.filter(post_id=post_id)
+        try:
+            post.delete()
+            comments.delete()
+        except:
+            return Response('failed', status.HTTP_400_BAD_REQUEST)
+        print post_id
+        print comments
+        return Response('', status.HTTP_200_OK)
 

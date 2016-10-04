@@ -1,13 +1,38 @@
-[1.post/destory](#post-destory)   
-[2.comments/show](#comments-show)   
+###文章接口
+* [根据文章ID删除指定文章](#post-destory)     
+* [根据文章ID获取文章的内容](#post-show)
+* [发布文章](#post-update)   
+* [获取用户发布的文章](#posts-user)
+* [上传图片并发布文章](#post/upload)
 
+###评论接口
+* [根据文章ID返回文章的评论列表](#comments-show) 
+* [我发出的评论列表](#)
+* [我收到的评论列表](#)
+* [获取用户发送及收到的评论列表](#)
+* [评论一条文章](#)
+* [删除一条评论](#)
+* [批量删除评论](#)
+* [回复一条评论](#)   
+
+###用户接口
+* [获取用户信息](#)
+* [获取用户的粉丝数、关注数、文章数](#)    
+    
+###关系
+* [获取用户的关注列表](#)
+* [获取共同关注的人列表](#)
+* [获取双向关注的人列表](#)
+* [获取用户的粉丝列表](#)
+* [关注某用户](#)
+* [取消关注某用户](#)
 
 <h3 id='post-destory'>post/detory</h3>
 ---
 根据文章ID删除指定文章
 ###URL
 ---
-<http://127.0.0.1:8000/post/destory>	
+<http://127.0.0.1:8000/api/v1.0/post/destory>	
 ###支持格式
 ---
 ***JSON***
@@ -38,7 +63,7 @@ post_id | true | int64 | 需要删除的文章的id
 
 <h3 id='comments-show'>comments/show</h3>
 ---
-根据微博ID返回某条微博的评论列表
+根据文章ID返回文章的评论列表
 ###URL
 ---
 <http://127.0.0.1:8000/comments/show.json>
@@ -55,3 +80,28 @@ post_id | true | int64 | 需要删除的文章的id
 参数 | 必选 | 类型及范围 | 说明  
 --- | --- | --- | --- 
 access_token | true | string | 采用OAuth授权方式为必填参数,OAuth授权后获得 
+
+<h3 id="post-show">post/show</h3>
+---
+***根据文章ID获取文章的内容***
+###URL
+---
+<http://127.0.0.1:8000/post/show>
+###支持格式
+---
+***JSON***
+###HTTP请求方式
+---
+***GET***
+###是否需要登录
+---
+***是***
+
+<h3 id='post-update'>post/update</h3>
+---
+发布文章
+###URL
+---
+<http://127.0.0.1:8000/post/update>
+
+

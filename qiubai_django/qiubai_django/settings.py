@@ -28,9 +28,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 ALLOWED_HOSTS = []
 
-AUTHENTICATION_BACKENDS = (
-    'oauth2_provider.backends.OAuth2Backend',
-)
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,16 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'api_v_1_0',
-    'oauth2_provider',
-    'corsheaders',
-    'provider',
-    'provider.oauth2',
 ]
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
-    )
-}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -60,10 +49,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'oauth2_provider.middleware.OAuth2TokenMiddleware',
 ]
 
 ROOT_URLCONF = 'qiubai_django.urls'
@@ -92,14 +79,15 @@ WSGI_APPLICATION = 'qiubai_django.wsgi.application'
 DATABASES = {
     'default': {
                 'ENGINE': 'django.db.backends.mysql',
-                'NAME': 'qiubaiDB',
+                'NAME': 'littledb',
                 'USER': 'root',
-                'PASSWORD': 'myaws',
-                'HOST': '52.43.221.136',
+                'PASSWORD': '123',
+                'HOST': '127.0.0.1',
                 'PORT': '3306',
     }
 }
 
+#'HOST': '52.43.221.136',
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators

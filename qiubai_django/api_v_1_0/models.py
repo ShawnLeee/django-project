@@ -18,10 +18,6 @@ class QBComment(models.Model):
     created_time = models.DateTimeField(blank=True, null=True)
     floor = models.IntegerField(blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'ls_comments_t'
-
 
 class QBPost(models.Model):
     post_id = models.CharField(primary_key=True, max_length=32)
@@ -30,10 +26,6 @@ class QBPost(models.Model):
     created_time = models.DateTimeField(blank=True, null=True)
     like_count = models.IntegerField(blank=True, null=True)
     comment_count = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ls_post'
 
 
 class QBUser(models.Model):
@@ -47,17 +39,9 @@ class QBUser(models.Model):
     gender = models.CharField(max_length=1, blank=True, null=True)
     token = models.CharField(max_length=255, blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'lsusers_t'
-
 
 class Roles(models.Model):
     name = models.CharField(unique=True, max_length=64, blank=True, null=True)
     default = models.IntegerField(blank=True, null=True)
     permissions = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'roles'
 
