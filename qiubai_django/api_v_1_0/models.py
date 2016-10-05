@@ -27,6 +27,17 @@ class QBPost(models.Model):
     like_count = models.IntegerField(blank=True, null=True)
     comment_count = models.IntegerField(blank=True, null=True)
 
+    def to_dict(self):
+        post_dict = {
+            'post_id': self.post_id,
+            'user': self.user.to_dict(),
+            'post_text': self.post_text,
+            'created_time': str(self.created_time),
+            'like_count': self.like_count,
+            'comment_count': self.comment_count,
+        }
+        return post_dict
+
 
 class QBUser(models.Model):
     user_id = models.CharField(primary_key=True, max_length=32)
@@ -38,6 +49,18 @@ class QBUser(models.Model):
     friends_count = models.IntegerField(blank=True, null=True)
     gender = models.CharField(max_length=1, blank=True, null=True)
     token = models.CharField(max_length=255, blank=True, null=True)
+
+    def to_dict(self):
+        user_dict = {
+            'user_id': self.user_id,
+            'user_name': self.user_name,
+            'article_count': self.article_count,
+            'avatar': self.avatar,
+            'friends_count': self.friends_count,
+            'follers_count': self.follers_count,
+            'gender': self.gender,
+        }
+        return user_dict
 
 
 class Roles(models.Model):

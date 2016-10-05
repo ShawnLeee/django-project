@@ -57,7 +57,20 @@ post_id | true | int64 | 需要删除的文章的id
 
 ```
 {
-   
+  "post_text": "去年冬天朋友赶会头卖水果，顾客：称点苹果。朋友：3块X8斤＝23块。你的3块X7斤正好20元。很快传开·····有个傻子在卖水果。结果一个下午不到满满的三轮车水果被抢购一空。收摊时卖祙子的大娘提醒：小伙子算不好账，下次一定得带上计算器。朋友：大娘你真当我傻呀，看看别的水果摊，他们倒是会算帐一下午又卖出去几斤？？",
+  "post_id": "117668998",
+  "comment_count": 22,
+  "like_count": 944,
+  "user": {
+    "user_id": "31495449",
+    "friends_count": 0,
+    "gender": "m",
+    "follers_count": 0,
+    "article_count": 0,
+    "avatar": "http://pic.qiushibaike.com/system/avtnew/3149/31495449/medium/20160404144203.jpg",
+    "user_name": "憨豆先生不太逗"
+  },
+  "created_time": "2016-10-03 00:00:00+00:00"
 }
 ```
 

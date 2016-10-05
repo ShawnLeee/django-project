@@ -3,6 +3,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+import json
 # from django.http import Http404
 from models import QBPost, QBComment
 from serializers import QBPostSerializer
@@ -56,11 +57,12 @@ class DeletePost(APIView):
         request_data = request.data
         post_id = request_data.get('post_id')
 #       删除文章及文章的评论
-        post = QBPost.objects.filter(post_id=post_id)
+        post = QBPost.objects.get(post_id=post_id)
+        post_dict = post.to_dict()
         comments = QBComment.objects.filter(post_id=post_id)
         comments.delete()
         post.delete()
-        return Response('', status.HTTP_200_OK)
+        return Response(post_dict, status.HTTP_200_OK)
 
 
 
