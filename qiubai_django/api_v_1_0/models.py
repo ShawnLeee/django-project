@@ -18,6 +18,17 @@ class QBComment(models.Model):
     created_time = models.DateTimeField(blank=True, null=True)
     floor = models.IntegerField(blank=True, null=True)
 
+    def to_dict(self):
+        comment_dict = {
+            'comment_id': self.comment_id,
+            'comment_text': self.comment_text,
+            'created_time': str(self.created_time),
+            'floor': self.floor,
+            'user': self.user.to_dict(),
+            'post': self.post.to_dict(),
+        }
+        return comment_dict
+
 
 class QBPost(models.Model):
     post_id = models.CharField(primary_key=True, max_length=32)

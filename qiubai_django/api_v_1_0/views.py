@@ -65,4 +65,26 @@ class DeletePost(APIView):
         return Response(post_dict, status.HTTP_200_OK)
 
 
+class PostShow(APIView):
+    def get(self, request):
+        post_id = request.GET.get('post_id')
+        post = QBPost.objects.get(post_id=post_id)
+        return Response(post.to_dict(), status.HTTP_200_OK)
+
+
+class CommentsShow(APIView):
+    def get(self, request):
+        post_id = request.GET.get('post_id')
+        since_id = request.GET.get('since_id')
+        max_id = request.GET.get('max_id')
+        count = request.GET.get('count')
+        page = request.GET.get('page')
+        filter_by_author = request.GET.get('filter_by_author')
+        comments = QBComment.objects.filter(post_id=post_id)
+        comments_array = [comment.to_dict() for comment in comments]
+        res_dict = {'comments': comments_array}
+
+        return Response(res_dict, status.HTTP_200_OK)
+
+
 
