@@ -9,6 +9,7 @@ from serializers import QBPostSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from uuid import uuid4
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 
 
 @login_required
@@ -48,6 +49,7 @@ class AddPost(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class DeletePost(APIView):
 
     def post(self, request):
@@ -56,12 +58,9 @@ class DeletePost(APIView):
 #       删除文章及文章的评论
         post = QBPost.objects.filter(post_id=post_id)
         comments = QBComment.objects.filter(post_id=post_id)
-        try:
-            post.delete()
-            comments.delete()
-        except:
-            return Response('failed', status.HTTP_400_BAD_REQUEST)
-        print post_id
-        print comments
+        comments.delete()
+        post.delete()
         return Response('', status.HTTP_200_OK)
+
+
 
