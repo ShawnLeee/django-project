@@ -274,20 +274,40 @@ page | false | int | 返回结果的页码，默认为1。
 
 ```
 {
-  "post_text": "去年冬天朋友赶会头卖水果，顾客：称点苹果。朋友：3块X8斤＝23块。你的3块X7斤正好20元。很快传开·····有个傻子在卖水果。结果一个下午不到满满的三轮车水果被抢购一空。收摊时卖祙子的大娘提醒：小伙子算不好账，下次一定得带上计算器。朋友：大娘你真当我傻呀，看看别的水果摊，他们倒是会算帐一下午又卖出去几斤？？",
-  "post_id": "117668998",
-  "comment_count": 22,
-  "like_count": 944,
-  "user": {
-    "user_id": "31495449",
-    "friends_count": 0,
-    "gender": "m",
-    "follers_count": 0,
-    "article_count": 0,
-    "avatar": "http://pic.qiushibaike.com/system/avtnew/3149/31495449/medium/20160404144203.jpg",
-    "user_name": "憨豆先生不太逗"
-  },
-  "created_time": "2016-10-03 00:00:00+00:00"
+  "posts": [
+    {
+      "post_text": "节日？我们认识吗？小店单身汉那有时间和空间去过什么节日，没钱什么都不是！大家都挺忙的，真的！等你有钱了，天天都是节日！",
+      "post_id": "113134415",
+      "comment_count": 2,
+      "like_count": 133,
+      "user": {
+        "user_id": "19629703",
+        "friends_count": 0,
+        "gender": "m",
+        "follers_count": 0,
+        "article_count": 0,
+        "avatar": "http://pic.qiushibaike.com/system/avtnew/1962/19629703/medium/20150625122541.jpg",
+        "user_name": "欠炮轰的星"
+      },
+      "created_time": "2015-10-01 00:00:00+00:00"
+    },
+    {
+      "post_text": "有麻烦又有多少人报警求助所谓的正义使者，我相信那里头有真正的正义使者，但我从未想过要和他们接触。因为假正义使者太多太多，除非我真遇到大事了！和我一样点一个呗……",
+      "post_id": "115844283",
+      "comment_count": 7,
+      "like_count": 304,
+      "user": {
+        "user_id": "19629703",
+        "friends_count": 0,
+        "gender": "m",
+        "follers_count": 0,
+        "article_count": 0,
+        "avatar": "http://pic.qiushibaike.com/system/avtnew/1962/19629703/medium/20150625122541.jpg",
+        "user_name": "欠炮轰的星"
+      },
+      "created_time": "2016-04-05 00:00:00+00:00"
+    }
+  ]
 }
 ```
 
