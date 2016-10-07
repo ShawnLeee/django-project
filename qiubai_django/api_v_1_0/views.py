@@ -3,14 +3,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-import json
 # from django.http import Http404
 from models import QBPost, QBComment
 from serializers import QBPostSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from uuid import uuid4
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
+#from django.db import transaction
 
 
 @login_required
@@ -77,14 +76,71 @@ class CommentsShow(APIView):
         post_id = request.GET.get('post_id')
         since_id = request.GET.get('since_id')
         max_id = request.GET.get('max_id')
+
         count = request.GET.get('count')
+        if count is None:
+            count = 50
         page = request.GET.get('page')
+        if page is None:
+            page = 1
+
         filter_by_author = request.GET.get('filter_by_author')
-        comments = QBComment.objects.filter(post_id=post_id)
+        if filter_by_author is None:
+            filter_by_author = 0
+
+        comments = QBComment.objects.filter(post_id=post_id).order_by('comment_id')
+
+        if since_id is not None:
+            comments = comments.filter(comment_id__gte=since_id)
+        if max_id is not None:
+            comments = comments.filter(comment_id__lte=max_id)
+
+        paginator = Paginator(comments, count)
+
+        try:
+            comments = paginator.page(page)
+        except PageNotAnInteger:
+            comments = paginator.page(1)
+        except EmptyPage:
+            comments = paginator.page(paginator.num_pages)
+
         comments_array = [comment.to_dict() for comment in comments]
         res_dict = {'comments': comments_array}
 
         return Response(res_dict, status.HTTP_200_OK)
 
+
+class PostsUser(APIView):
+    def get(self, request):
+        access_token = request.GET.get('access_token')
+        uid = request.GET.get('uid')
+        since_id = request.GET.get('since_id')
+        max_id = request.GET.get('max_id')
+        count = request.GET.get('count')
+        page = request.GET.get('page')
+
+        if page is None:
+            page = 1
+        if count is None:
+            count = 20
+        if count > 100:
+            count = 100
+        posts = QBPost.objects.filter(user=uid)
+
+        if since_id is not None:
+            posts = posts.filter(post_id__gte=since_id)
+        if max_id is not None:
+            posts = posts.filter(post_id__lte=max_id)
+
+        paginator = Paginator(posts, count)
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+
+        posts_dict = {'posts': [post.to_dict() for post in posts]}
+        return Response(posts_dict, status.HTTP_200_OK)
 
 
