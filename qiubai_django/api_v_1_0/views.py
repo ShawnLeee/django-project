@@ -110,4 +110,37 @@ class CommentsShow(APIView):
         return Response(res_dict, status.HTTP_200_OK)
 
 
+class PostsUser(APIView):
+    def get(self, request):
+        access_token = request.GET.get('access_token')
+        uid = request.GET.get('uid')
+        since_id = request.GET.get('since_id')
+        max_id = request.GET.get('max_id')
+        count = request.GET.get('count')
+        page = request.GET.get('page')
+
+        if page is None:
+            page = 1
+        if count is None:
+            count = 20
+        if count > 100:
+            count = 100
+        posts = QBPost.objects.filter(user=uid)
+
+        if since_id is not None:
+            posts = posts.filter(post_id__gte=since_id)
+        if max_id is not None:
+            posts = posts.filter(post_id__lte=max_id)
+
+        paginator = Paginator(posts, count)
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+
+        posts_dict = {'posts': [post.to_dict() for post in posts]}
+        return Response(posts_dict, status.HTTP_200_OK)
+
 
