@@ -1,9 +1,14 @@
 # encoding: utf-8
 # from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+import os
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 # from django.http import Http404
+from django.http import HttpRequest
 from models import QBPost, QBComment
 from serializers import QBPostSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -21,7 +26,14 @@ class QBPostList(APIView):
     """
     List Post in page
     """
-    def get(self, request, format=None):
+    def get(self, request):
+        '''
+        :type request:HttpRequest
+        '''
+        if request.user.is_authenticated:
+            print(request.user)
+        else:
+            print(request.user)
         post_list = QBPost.objects.all()
         paginator = Paginator(post_list, 10)
         page = request.GET.get('page')
@@ -143,4 +155,22 @@ class PostsUser(APIView):
         posts_dict = {'posts': [post.to_dict() for post in posts]}
         return Response(posts_dict, status.HTTP_200_OK)
 
+
+class Upload(APIView):
+    def post(self, request):
+        '''
+        :type request:HttpRequest
+        '''
+        img = request.FILES.get('pic')
+        path = default_storage.save('me.jpg', ContentFile(img.read()))
+        post = QBPost.objects.get(post_id='116109663')
+        img_url = settings.MEDIA_URL + path
+
+        post.img_url = 'http://{site}{path}'.format(site=settings.SERVER_DOMAIN, path=img_url)
+        post.save()
+
+        post = QBPost.objects.get(post_id='116109663')
+
+        print post.img_url
+        return Response(post.img_url)
 

@@ -37,6 +37,7 @@ class QBPost(models.Model):
     created_time = models.DateTimeField(blank=True, null=True)
     like_count = models.IntegerField(blank=True, null=True)
     comment_count = models.IntegerField(blank=True, null=True)
+    img_url = models.URLField("Server URL", blank=True)
 
     def to_dict(self):
         post_dict = {
