@@ -1,14 +1,20 @@
 # encoding: utf-8
 # from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+import os
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 # from django.http import Http404
+from django.http import HttpRequest
 from models import QBPost, QBComment
 from serializers import QBPostSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from uuid import uuid4
 from django.contrib.auth.decorators import login_required
+from comments import get_comments
 #from django.db import transaction
 
 
@@ -21,7 +27,14 @@ class QBPostList(APIView):
     """
     List Post in page
     """
-    def get(self, request, format=None):
+    def get(self, request):
+        '''
+        :type request:HttpRequest
+        '''
+        if request.user.is_authenticated:
+            print(request.user)
+        else:
+            print(request.user)
         post_list = QBPost.objects.all()
         paginator = Paginator(post_list, 10)
         page = request.GET.get('page')
@@ -73,42 +86,15 @@ class PostShow(APIView):
 
 class CommentsShow(APIView):
     def get(self, request):
-        post_id = request.GET.get('post_id')
-        since_id = request.GET.get('since_id')
-        max_id = request.GET.get('max_id')
+        resdict = get_comments(request)
+        return Response(resdict, status.HTTP_200_OK)
 
-        count = request.GET.get('count')
-        if count is None:
-            count = 50
-        page = request.GET.get('page')
-        if page is None:
-            page = 1
-
-        filter_by_author = request.GET.get('filter_by_author')
-        if filter_by_author is None:
-            filter_by_author = 0
-
-        comments = QBComment.objects.filter(post_id=post_id).order_by('comment_id')
-
-        if since_id is not None:
-            comments = comments.filter(comment_id__gte=since_id)
-        if max_id is not None:
-            comments = comments.filter(comment_id__lte=max_id)
-
-        paginator = Paginator(comments, count)
-
-        try:
-            comments = paginator.page(page)
-        except PageNotAnInteger:
-            comments = paginator.page(1)
-        except EmptyPage:
-            comments = paginator.page(paginator.num_pages)
-
-        comments_array = [comment.to_dict() for comment in comments]
-        res_dict = {'comments': comments_array}
-
-        return Response(res_dict, status.HTTP_200_OK)
-
+class UserComments(APIView):
+    def get(self, request):
+        resdict = get_comments(request)
+        return Response(resdict, status.HTTP_200_OK)
+        
+        
 
 class PostsUser(APIView):
     def get(self, request):
@@ -143,4 +129,22 @@ class PostsUser(APIView):
         posts_dict = {'posts': [post.to_dict() for post in posts]}
         return Response(posts_dict, status.HTTP_200_OK)
 
+
+class Upload(APIView):
+    def post(self, request):
+        '''
+        :type request:HttpRequest
+        '''
+        img = request.FILES.get('pic')
+        path = default_storage.save('me.jpg', ContentFile(img.read()))
+        post = QBPost.objects.get(post_id='116109663')
+        img_url = settings.MEDIA_URL + path
+
+        post.img_url = 'http://{site}{path}'.format(site=settings.SERVER_DOMAIN, path=img_url)
+        post.save()
+
+        post = QBPost.objects.get(post_id='116109663')
+
+        print post.img_url
+        return Response(post.img_url)
 

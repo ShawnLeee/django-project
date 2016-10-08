@@ -16,10 +16,15 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib.auth.models import User, Group
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 
 #from rest_framework import permissions, routers, selializers, viewsets
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/v1.0/', include('api_v_1_0.urls')),
-]
+    url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    # url(r'^accounts/login/$', include('django.contrib.auth.views.login')),
+    # url(r'^accounts/logout/$', include('django.contrib.views.logout')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
