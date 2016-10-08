@@ -7,7 +7,7 @@
 
 ###评论接口
 * [根据文章ID返回文章的评论列表](#comments-show) 
-* [我发出的评论列表](#)
+* [我发出的评论列表](#comments-by_me)
 * [我收到的评论列表](#)
 * [获取用户发送及收到的评论列表](#)
 * [评论一条文章](#)
@@ -141,6 +141,103 @@ post_id | true | int64 | 需要删除的文章的id
 --- | --- | --- | --- 
 access_token | true | string | 采用OAuth授权方式为必填参数,OAuth授权后获得 
 post_id | true | int64 |需要查询文章的ID
+since_id | false | int64 | 若指定此参数，则返回ID比since_id大的评论（即比since_id时间晚的评论）,默认为0
+max_id | false | int64 | 若指定此参数，则返回ID小于或等于max_id的评论，默认为0
+count | false | int | 单叶返回的纪录条数，默认为50
+page | false | int | 返回结果的页码
+filter_by_author | false | int | 作者筛选类型，0:全部、1:我关注的人 、2:陌生人 ，默认为0
+###返回结果
+---
+***JSON示例***   
+
+```   
+{
+  "comments": [
+    {
+      "comment_text": "图呢？",
+      "floor": 6,
+      "comment_id": "366140615",
+      "user": {
+        "user_id": "31960253",
+        "friends_count": 0,
+        "gender": "m",
+        "follers_count": 0,
+        "article_count": 0,
+        "avatar": "http://pic.qiushibaike.com/system/avtnew/3196/31960253/medium/2016091221264454.JPEG",
+        "user_name": "廻憶"
+      },
+      "created_time": "2016-10-04 10:50:03.693990+00:00",
+      "post": {
+        "post_text": "：喂，哥们你在家忙啥呢？：这不是你出差一个月了，你家责任田太旱了，嫂子让我帮忙浇地呢。：你这禽兽，你·····你·····：我真的在帮忙浇地！！",
+        "post_id": "117665680",
+        "comment_count": 25,
+        "like_count": 3476,
+        "user": {
+          "user_id": "31495449",
+          "friends_count": 0,
+          "gender": "m",
+          "follers_count": 0,
+          "article_count": 0,
+          "avatar": "http://pic.qiushibaike.com/system/avtnew/3149/31495449/medium/20160404144203.jpg",
+          "user_name": "憨豆先生不太逗"
+        },
+        "created_time": "2016-10-03 00:00:00+00:00"
+      }
+    },
+    {
+      "comment_text": "你家有地",
+      "floor": 7,
+      "comment_id": "366141087",
+      "user": {
+        "user_id": "12402200",
+        "friends_count": 0,
+        "gender": "m",
+        "follers_count": 0,
+        "article_count": 0,
+        "avatar": "http://pic.qiushibaike.com/system/avtnew/1240/12402200/medium/20140807223634.jpg",
+        "user_name": "赣南第一鞭"
+      },
+      "created_time": "2016-10-04 10:50:03.693990+00:00",
+      "post": {
+        "post_text": "：喂，哥们你在家忙啥呢？：这不是你出差一个月了，你家责任田太旱了，嫂子让我帮忙浇地呢。：你这禽兽，你·····你·····：我真的在帮忙浇地！！",
+        "post_id": "117665680",
+        "comment_count": 25,
+        "like_count": 3476,
+        "user": {
+          "user_id": "31495449",
+          "friends_count": 0,
+          "gender": "m",
+          "follers_count": 0,
+          "article_count": 0,
+          "avatar": "http://pic.qiushibaike.com/system/avtnew/3149/31495449/medium/20160404144203.jpg",
+          "user_name": "憨豆先生不太逗"
+        },
+        "created_time": "2016-10-03 00:00:00+00:00"
+      }
+    }
+  ]
+}
+```    
+<h3 id='comments-by_me'>comments/by_me.json</h3>
+---
+获取用户所发出的评论列表
+###URL
+---
+<http://52.43.221.136/api/v1.0/comments/by_me.json>
+###支持格式
+---
+**JSON**
+###HTTP请求方式
+---
+***GET***
+###是否需要登录
+---
+**是**
+###请求参数
+参数 | 必选 | 类型及范围 | 说明  
+--- | --- | --- | --- 
+access_token | true | string | 采用OAuth授权方式为必填参数,OAuth授权后获得 
+user_id | true | int64 |需要查询的作者ID
 since_id | false | int64 | 若指定此参数，则返回ID比since_id大的评论（即比since_id时间晚的评论）,默认为0
 max_id | false | int64 | 若指定此参数，则返回ID小于或等于max_id的评论，默认为0
 count | false | int | 单叶返回的纪录条数，默认为50

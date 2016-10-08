@@ -14,6 +14,7 @@ from serializers import QBPostSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from uuid import uuid4
 from django.contrib.auth.decorators import login_required
+from comments import get_comments
 #from django.db import transaction
 
 
@@ -85,42 +86,15 @@ class PostShow(APIView):
 
 class CommentsShow(APIView):
     def get(self, request):
-        post_id = request.GET.get('post_id')
-        since_id = request.GET.get('since_id')
-        max_id = request.GET.get('max_id')
+        resdict = get_comments(request)
+        return Response(resdict, status.HTTP_200_OK)
 
-        count = request.GET.get('count')
-        if count is None:
-            count = 50
-        page = request.GET.get('page')
-        if page is None:
-            page = 1
-
-        filter_by_author = request.GET.get('filter_by_author')
-        if filter_by_author is None:
-            filter_by_author = 0
-
-        comments = QBComment.objects.filter(post_id=post_id).order_by('comment_id')
-
-        if since_id is not None:
-            comments = comments.filter(comment_id__gte=since_id)
-        if max_id is not None:
-            comments = comments.filter(comment_id__lte=max_id)
-
-        paginator = Paginator(comments, count)
-
-        try:
-            comments = paginator.page(page)
-        except PageNotAnInteger:
-            comments = paginator.page(1)
-        except EmptyPage:
-            comments = paginator.page(paginator.num_pages)
-
-        comments_array = [comment.to_dict() for comment in comments]
-        res_dict = {'comments': comments_array}
-
-        return Response(res_dict, status.HTTP_200_OK)
-
+class UserComments(APIView):
+    def get(self, request):
+        resdict = get_comments(request)
+        return Response(resdict, status.HTTP_200_OK)
+        
+        
 
 class PostsUser(APIView):
     def get(self, request):
