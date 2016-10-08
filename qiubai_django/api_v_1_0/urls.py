@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'post/show$', views.PostShow.as_view()),
     url(r'comments/show.json$', views.CommentsShow.as_view()),
     url(r'posts/user$', views.PostsUser.as_view()),
+    url(r'upload$', views.Upload.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
