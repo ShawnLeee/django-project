@@ -14,10 +14,11 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SERVER_DOMAIN = '52.43.221.136'
+PRO_SERVER_BASE = 'http://52.43.221.136'
+TES_SERVER_BASE = 'http://127.0.0.1:8000/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'api_v_1_0',
     'oauth2_provider',
     'corsheaders',
@@ -47,6 +49,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
     os.path.join(BASE_DIR, 'media'),
 ]
+
+AUTHENTICATION_BACKENDS = (  
+    'MyAuth.auth.MyCustomBackend',   
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

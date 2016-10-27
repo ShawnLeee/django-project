@@ -6,16 +6,34 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 from rest_framework import status
 # from django.http import Http404
 from django.http import HttpRequest
-from models import QBPost, QBComment
+from models import QBPost, QBComment, QBUser, QBPostPic
 from serializers import QBPostSerializer
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from uuid import uuid4
 from django.contrib.auth.decorators import login_required
 from comments import get_comments
+from PIL import ImageFile
+# import ImageFile
 #from django.db import transaction
+
+
+class LoginView(APIView):
+    def get(self, request):
+        user = request.user
+        print user
+        return Response({'dshig':'sdhigod'}, status.HTTP_200_OK)
+
+    def post(self, request):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = QBUser.objects.get(user_name=username)
+        token = Token.objects.create(user=user)
+        print token.key
+        return Response({'username':user.user_name, 'user_id':user.user_id}, status.HTTP_200_OK)
 
 
 @login_required
@@ -132,19 +150,32 @@ class PostsUser(APIView):
 
 class Upload(APIView):
     def post(self, request):
-        '''
-        :type request:HttpRequest
-        '''
-        img = request.FILES.get('pic')
-        path = default_storage.save('me.jpg', ContentFile(img.read()))
-        post = QBPost.objects.get(post_id='116109663')
-        img_url = settings.MEDIA_URL + path
+        user_id = request.POST.get('user_id')
+        post_text = request.POST.get('post_text')
 
-        post.img_url = 'http://{site}{path}'.format(site=settings.SERVER_DOMAIN, path=img_url)
-        post.save()
+        post = QBPost.new_post_with(post_text=post_text, user_id=user_id)
+        pics = []
 
-        post = QBPost.objects.get(post_id='116109663')
+        files = request.FILES.getlist('pic')
+        for f in files:
+            parser = ImageFile.Parser()
+            for chunk in f.chunks():
+                parser.feed(chunk)
+            img = parser.close()
+            imgpath = os.path.join(settings.MEDIA_URL, uuid4().hex+'.jpeg')
+            img_abs_path = os.path.join(settings.BASE_DIR, imgpath)
+            img.save(img_abs_path)
+            post_pic = QBPostPic(pic_id=uuid4().hex, post_id=post.post_id, pic_url=imgpath)
+            pics.append(post_pic)
 
-        print post.img_url
-        return Response(post.img_url)
+        try:
+            post.save()
+            for pic in pics:
+                pic.save()
+        except:
+            raise ValueError
+
+        post_dict = post.to_dict()
+
+        return Response(post_dict, status.HTTP_200_OK)
 

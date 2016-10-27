@@ -8,6 +8,8 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.conf import settings
+from uuid import uuid4
 
 
 class QBComment(models.Model):
@@ -37,9 +39,15 @@ class QBPost(models.Model):
     created_time = models.DateTimeField(blank=True, null=True)
     like_count = models.IntegerField(blank=True, null=True)
     comment_count = models.IntegerField(blank=True, null=True)
-    img_url = models.URLField("Server URL", blank=True)
 
     def to_dict(self):
+
+        pics = QBPostPic.objects.filter(post_id=self.post_id)
+
+        pic_urls = []
+        for pic in pics:
+            pic_urls.append(pic.server_url())
+
         post_dict = {
             'post_id': self.post_id,
             'user': self.user.to_dict(),
@@ -47,9 +55,30 @@ class QBPost(models.Model):
             'created_time': str(self.created_time),
             'like_count': self.like_count,
             'comment_count': self.comment_count,
+            'pics': pic_urls
         }
         return post_dict
 
+    @staticmethod
+    def new_post_with(post_text=None, user_id=None):
+        post = QBPost()
+        post.post_id = uuid4().hex
+        post.user_id = user_id
+        post.post_text = post_text
+
+        return post
+
+
+class QBPostPic(models.Model):
+    pic_id = models.CharField(primary_key=True, max_length=32)
+    post = models.ForeignKey('QBPost', models.DO_NOTHING, blank=True, null=True)
+    pic_url = models.CharField(null=False,max_length=64)
+
+    def server_url(self):
+        if settings.DEBUG:
+            return settings.TES_SERVER_BASE + self.pic_url
+        else:
+            return settings.PRO_SERVER_BASE + self.pic_url
 
 class QBUser(models.Model):
     user_id = models.CharField(primary_key=True, max_length=32)
@@ -61,6 +90,9 @@ class QBUser(models.Model):
     friends_count = models.IntegerField(blank=True, null=True)
     gender = models.CharField(max_length=1, blank=True, null=True)
     token = models.CharField(max_length=255, blank=True, null=True)
+
+    def check_password(self):
+        return True
 
     def to_dict(self):
         user_dict = {
