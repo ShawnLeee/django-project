@@ -1,6 +1,8 @@
 # encoding: utf-8
 # from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from django.contrib import auth
+from MyAuth.auth import MyBackend
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -8,7 +10,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-# from django.http import Http404
 from django.http import HttpRequest
 from models import QBPost, QBComment, QBUser, QBPostPic
 from serializers import QBPostSerializer
@@ -17,23 +18,36 @@ from uuid import uuid4
 from django.contrib.auth.decorators import login_required
 from comments import get_comments
 from PIL import ImageFile
+from rest_framework.authentication import SessionAuthentication, BaseAuthentication
+from rest_framework.permissions import IsAuthenticated
 # import ImageFile
 #from django.db import transaction
 
+class Token(APIView):
+    @login_required
+    def get_auth_token(self, request):
+        user = request.user
+        token = user.generate_token()
+        return Response({'token': token}, status.HTTP_200_OK)
+
+class LogoutView(APIView):
+    def get(self, request):
+        auth.logout(request)
+        return Response('Logout Success')
 
 class LoginView(APIView):
     def get(self, request):
-        user = request.user
-        print user
         return Response({'dshig':'sdhigod'}, status.HTTP_200_OK)
 
     def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = QBUser.objects.get(user_name=username)
-        token = Token.objects.create(user=user)
-        print token.key
-        return Response({'username':user.user_name, 'user_id':user.user_id}, status.HTTP_200_OK)
+        user = auth.authenticate(user_name=username, password=password)
+        if user is not None and user.is_active:
+            auth.login(request, user)
+            return Response('Login Success')
+        else:
+            return Response('Login Failed')
 
 
 @login_required
@@ -45,6 +59,8 @@ class QBPostList(APIView):
     """
     List Post in page
     """
+    authentication_classes = (SessionAuthentication, BaseAuthentication, )
+    permission_classes = (IsAuthenticated,)
     def get(self, request):
         '''
         :type request:HttpRequest

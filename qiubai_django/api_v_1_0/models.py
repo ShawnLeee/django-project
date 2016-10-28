@@ -6,11 +6,26 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from __future__ import unicode_literals
-
+from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.base_user import AbstractBaseUser
+from managers import UserManager
 from django.db import models
 from django.conf import settings
 from uuid import uuid4
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from django.contrib.auth.models import AbstractUser
 
+
+# class V2User(AbstractUser):
+#     email = models.EmailField('email address', unique=True, db_index=True)
+#     joined = models.DateTimeField(auto_now_add=True)
+#     is_active = models.BooleanField(default=True)
+#     is_admin = models.BooleanField(default=False)
+
+#     USERNAME_FIELD = 'email'
+
+#     def __unicode__(self):
+#         return self.email
 
 class QBComment(models.Model):
     comment_id = models.CharField(primary_key=True, max_length=32)
@@ -80,19 +95,25 @@ class QBPostPic(models.Model):
         else:
             return settings.PRO_SERVER_BASE + self.pic_url
 
-class QBUser(models.Model):
+class QBUser(AbstractBaseUser, PermissionsMixin):
     user_id = models.CharField(primary_key=True, max_length=32)
-    user_name = models.CharField(max_length=40, blank=True, null=True)
+    user_name = models.CharField(max_length=40, blank=True, null=True, unique=True)
     article_count = models.IntegerField(blank=True, null=True)
     avatar = models.CharField(max_length=255, blank=True, null=True)
-    password_hash = models.CharField(max_length=128, blank=True, null=True)
     follers_count = models.IntegerField(blank=True, null=True)
     friends_count = models.IntegerField(blank=True, null=True)
     gender = models.CharField(max_length=1, blank=True, null=True)
-    token = models.CharField(max_length=255, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=True)
 
-    def check_password(self):
-        return True
+    objects = UserManager()
+
+    def get_short_name(self):
+        return self.user_name
+
+    USERNAME_FIELD = 'user_name'
+    REQUIRED_FIELDS = []
+
 
     def to_dict(self):
         user_dict = {

@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from . import views
 from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
     # url(r'users/', views.UserDetail.as_view()),
@@ -13,7 +14,9 @@ urlpatterns = [
     url(r'posts/user$', views.PostsUser.as_view()),
     url(r'upload/$', views.Upload.as_view()),
     url(r'comments/by_me.json$', views.UserComments.as_view()),
-    url(r'login/$',views.LoginView.as_view()),
+    url(r'login/$', views.LoginView.as_view()),
+    url(r'logout/$', views.LogoutView.as_view()),
+    # url(r'^auth-token/', obtain_jwt_token),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
